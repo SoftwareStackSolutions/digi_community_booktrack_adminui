@@ -118,7 +118,7 @@ jobs:
           unzip artifact.zip -d app
 
       # ✅ Install dependencies & build Vite app
-      - name: Build frontend
+      - name: Build AdminUI
         run: |
           cd app
           npm install
