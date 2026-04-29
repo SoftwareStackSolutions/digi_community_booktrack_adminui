@@ -146,7 +146,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t admin-frontend:latest ./app
+          docker build -t admin-frontend:latest ./app/tracking_admin
 
       - name: Tag image
         run: |
