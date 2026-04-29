@@ -22,11 +22,11 @@ jobs:
       - name: Install zip
         run: sudo apt-get update && sudo apt-get install -y zip
 
-      # ✅ Package full frontend (tracking_admin root)
-      - name: Zip AdminUI app
+      # ✅ FIX: ensure clean zip structure
+      - name: Zip AdminUI app (clean structure)
         run: |
           zip -r AdminUI-package.zip . \
-            -x "*.git*" "node_modules/*" "dist/*"
+            -x "*.git*" "node_modules/*" "dist/*" ".github/*"
 
       - name: Checkout Artifact Repo
         uses: actions/checkout@v4
@@ -35,7 +35,6 @@ jobs:
           token: ${{ secrets.MY_GITHUB_TOKEN }}
           path: artifact-repo
 
-      # ✅ Use Frontend folder
       - name: Check previous hash
         run: |
           mkdir -p artifact-repo/AdminUI
@@ -118,10 +117,23 @@ jobs:
           mkdir app
           unzip artifact.zip -d app
 
-      # ✅ Install dependencies & build Vite app
+      # ✅ DEBUG (keep this for now)
+      - name: Debug structure
+        run: |
+          ls -R app
+
+      # ✅ SAFE BUILD (auto-detect package.json)
       - name: Build AdminUI
         run: |
           cd app
+
+          if [ -f package.json ]; then
+            echo "package.json found at root"
+          else
+            echo "Searching for package.json..."
+            cd $(find . -name package.json -not -path "*/node_modules/*" | head -n 1 | xargs dirname)
+          fi
+
           npm install
           npm run build
 
@@ -132,7 +144,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.MY_GITHUB_TOKEN }}
 
-      # ✅ Use nginx for serving built files
       - name: Build Docker image
         run: |
           docker build -t admin-frontend:latest ./app
