@@ -114,6 +114,7 @@ jobs:
 
       - name: Extract artifact
         run: |
+          rm -rf app
           mkdir app
           unzip artifact.zip -d app
 
