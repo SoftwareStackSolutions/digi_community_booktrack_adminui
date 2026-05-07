@@ -3,7 +3,7 @@ name: Admin UI CI Pipeline
 on:
   push:
     branches:
-      - main
+      - development
 
 jobs:
 
